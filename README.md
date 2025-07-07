@@ -41,9 +41,9 @@ export { auth, db };
 Use firebase-config.example.js as a reference.
 
 TODO:
-	•	Job filtering & search
-	•	User profiles
-	•	Job application system
-	•	Notifications
-	•	Mobile responsive layout
-	•	Hosting + Deployment
+- Job filtering & search
+- User profiles
+- Job application system
+- Notifications
+- Mobile responsive layout
+- Hosting + Deployment
