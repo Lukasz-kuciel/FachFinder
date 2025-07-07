@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Home | FachFinder</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Welcome to JobConnect</h1>
+    <p id="user-info">Checking login status...</p>
+    <div id="actions" style="display: none;">
+      <a href="add-job.html">
+        <button>Add Job</button>
+      </a>
+      <button id="logout-btn">Logout</button>
+    </div>
+  </div>
+
+  <script type="module">
+    import { auth } from './firebase-config.js';
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    const userInfo = document.getElementById("user-info");
+    const actions = document.getElementById("actions");
+    const logoutBtn = document.getElementById("logout-btn");
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        userInfo.textContent = `You are logged in as: ${user.email}`;
+        actions.style.display = "block";
+      } else {
+        window.location.href = "login.html";
+      }
+    });
+
+    logoutBtn.addEventListener("click", async () => {
+      await signOut(auth);
+      window.location.href = "login.html";
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Add Job | FachFinder</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Add New Job</h1>
+    <form id="job-form">
+      <input type="text" id="title" placeholder="Job title" required />
+      <textarea id="description" placeholder="Job description" required></textarea>
+      <input type="text" id="location" placeholder="Location" required />
+      <button type="submit">Post Job</button>
+    </form>
+
+    <div id="message" style="margin-top: 10px; font-weight: bold;"></div>
+  </div>
+
+  <script type="module">
+    import { auth, db } from './firebase-config.js';
+    import {
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import {
+      collection,
+      addDoc,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const form = document.getElementById("job-form");
+    const message = document.getElementById("message");
+
+    let currentUser = null;
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        currentUser = user;
+      } else {
+        window.location.href = "login.html";
+      }
+    });
+
+    // Obsługa wysłania formularza
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const title = form.title.value.trim();
+      const description = form.description.value.trim();
+      const location = form.location.value.trim();
+
+      if (!currentUser) return;
+
+      try {
+        await addDoc(collection(db, "jobs"), {
+          title,
+          description,
+          location,
+          createdAt: serverTimestamp(),
+          userId: currentUser.uid,
+          userEmail: currentUser.email
+        });
+
+        message.textContent = "✅ Job posted successfully!";
+        message.style.color = "green";
+        form.reset();
+
+        setTimeout(() => {
+          message.textContent = "";
+        }, 4000);
+      } catch (error) {
+        message.textContent = "❌ Error: " + error.message;
+        message.style.color = "red";
+      }
+    });
+  </script>
+</body>
+</html>
